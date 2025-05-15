@@ -5,7 +5,7 @@ st.set_page_config(layout="wide")
 st.title("📊 Task Reporting Dashboard")
 
 # Create tabs
-tab1, tab2 = st.tabs(["💼 Corporate Task Reporting", "🍽️ Restaurant KPIs"])
+tab1, tab2 = st.tabs(["💼 KPI Dashboard Powered by PowerBI", "🍽️ Restaurant KPIs"])
 
 # --------------------------
 # TAB 1 – Corporate Task Reporting
