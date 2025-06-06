@@ -2,10 +2,10 @@ import streamlit as st
 import pandas as pd
 
 st.set_page_config(layout="wide")
-st.title("📊 Restaurant Performance Powered by PowerBI")
+st.title("📊 Store Performance Powered by PowerBI")
 
 # Create tabs
-tab1, tab2 = st.tabs(["WorkJam Action Report", "🍽️ Restaurant KPIs"])
+tab1, tab2 = st.tabs(["WorkJam Action Report", "Location KPIs"])
 
 # --------------------------
 # TAB 1 – Corporate Task Reporting
