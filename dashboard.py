@@ -8,26 +8,29 @@ st.title("📊 Store Performance Powered by PowerBI")
 task_link = "https://app-next.workjamdemo.com/tasks/calendar?name=&progressStatuses=NOT_STARTED&progressStatuses=IN_PROGRESS&progressStatuses=READY_TO_COMPLETE&progressStatuses=IN_REVIEW&progressStatuses=REDO&projectId=&sort=availability&startKey=&base=2025-06-13&offset=0&moreFilters=false&projectDescription=&onlyOverdue=false"
 
 # --------------------------
-# TAB 1 – Corporate Task Reporting
+# TAB SETUP
 tab1, tab2 = st.tabs(["WorkJam Action Report", "Location KPIs"])
+
+# --------------------------
+# TAB 1 – Corporate Task Reporting
 with tab1:
     st.subheader("Corporate Task Reporting")
 
     # Sample KPI data
     kpi_data = {
-        "Avg Task Completion Time": {"value": "3.8m", "change": "+1.2m", "color": f"[🔴]({task_link})"},
-        "On-Time Task Completion %": {"value": "82.4%", "change": "", "color": "🟡"},
-        "Overdue Tasks": {"value": "142", "change": "+12%", "color": "🟢"},
-        "Compliance Audits Passed": {"value": "91.3%", "change": "+5.4%", "color": "🟢"}
+        "Avg Task Completion Time": {"value": "3.8m", "change": "+1.2m", "status": "🔴"},
+        "On-Time Task Completion %": {"value": "82.4%", "change": "", "status": "🟡"},
+        "Overdue Tasks": {"value": "142", "change": "+12%", "status": "🟢"},
+        "Compliance Audits Passed": {"value": "91.3%", "change": "+5.4%", "status": "🟢"}
     }
 
-    # Display KPI cards in 4 columns
+    # Display KPI cards
     kpi_cols = st.columns(4)
     for idx, (kpi, data) in enumerate(kpi_data.items()):
         with kpi_cols[idx]:
             st.metric(label=kpi, value=data["value"], delta=data["change"])
 
-    # Scorecard data
+    # Scorecard DataFrame
     scorecard_df = pd.DataFrame({
         "KPI": [
             "Avg Completion Time",
@@ -51,18 +54,36 @@ with tab1:
             "75%"
         ],
         "Status": [
-            f"[🔴]({task_link})",
+            "🔴",
             "🟢",
             "🟢",
-            f"[🔴]({task_link})",
-            f"[🔴]({task_link})"
+            "🔴",
+            "🔴"
         ]
     })
 
-    st.subheader("📋 KPI Scorecard")
-    st.dataframe(scorecard_df, use_container_width=True)
+    def render_scorecard(df):
+        html = "<table><tr>"
+        for col in df.columns:
+            html += f"<th style='padding:8px; text-align:left'>{col}</th>"
+        html += "</tr>"
 
-    # Additional Health Metrics
+        for _, row in df.iterrows():
+            html += "<tr>"
+            for col in df.columns:
+                val = row[col]
+                if col == "Status" and "🔴" in val:
+                    val = f"<a href='{task_link}' target='_blank'>🔴</a>"
+                html += f"<td style='padding:8px'>{val}</td>"
+            html += "</tr>"
+        html += "</table>"
+
+        st.markdown(html, unsafe_allow_html=True)
+
+    st.subheader("📋 KPI Scorecard")
+    render_scorecard(scorecard_df)
+
+    # Additional Metrics
     st.subheader("📈 Health Gauges")
     col1, col2 = st.columns(2)
     with col1:
@@ -75,7 +96,6 @@ with tab1:
 with tab2:
     st.subheader("Restaurant KPI Dashboard")
 
-    # Mock restaurant data
     restaurant_scorecard_df = pd.DataFrame({
         "Location": [
             "Easton Town Center", "Polaris Fashion Place", "Short North",
@@ -89,7 +109,6 @@ with tab2:
         "Task Target %": ["95%"] * 6
     })
 
-    # R/Y/G status logic
     def status_color(value, target, reverse=False):
         try:
             val = float(value.strip('%'))
@@ -100,10 +119,10 @@ with tab2:
                 elif val <= tgt:
                     return '🟡'
                 else:
-                    return f"[🔴]({task_link})"
+                    return f"<a href='{task_link}' target='_blank'>🔴</a>"
             else:
                 if val > tgt * 1.1:
-                    return f"[🔴]({task_link})"
+                    return f"<a href='{task_link}' target='_blank'>🔴</a>"
                 elif val > tgt:
                     return '🟡'
                 else:
@@ -121,4 +140,20 @@ with tab2:
         lambda row: status_color(row["WorkJam Task Completion %"], row["Task Target %"], reverse=True), axis=1
     )
 
-    st.dataframe(restaurant_scorecard_df, use_container_width=True)
+    def render_restaurant_table(df):
+        html = "<table><tr>"
+        for col in df.columns:
+            html += f"<th style='padding:8px; text-align:left'>{col}</th>"
+        html += "</tr>"
+
+        for _, row in df.iterrows():
+            html += "<tr>"
+            for col in df.columns:
+                val = row[col]
+                html += f"<td style='padding:8px'>{val}</td>"
+            html += "</tr>"
+        html += "</table>"
+
+        st.markdown(html, unsafe_allow_html=True)
+
+    render_restaurant_table(restaurant_scorecard_df)
