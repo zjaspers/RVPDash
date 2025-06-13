@@ -4,17 +4,18 @@ import pandas as pd
 st.set_page_config(layout="wide")
 st.title("📊 Store Performance Powered by PowerBI")
 
-# Create tabs
-tab1, tab2 = st.tabs(["WorkJam Action Report", "Location KPIs"])
+# WorkJam Task Link
+task_link = "https://app-next.workjamdemo.com/tasks/calendar?name=&progressStatuses=NOT_STARTED&progressStatuses=IN_PROGRESS&progressStatuses=READY_TO_COMPLETE&progressStatuses=IN_REVIEW&progressStatuses=REDO&projectId=&sort=availability&startKey=&base=2025-06-13&offset=0&moreFilters=false&projectDescription=&onlyOverdue=false"
 
 # --------------------------
 # TAB 1 – Corporate Task Reporting
+tab1, tab2 = st.tabs(["WorkJam Action Report", "Location KPIs"])
 with tab1:
     st.subheader("Corporate Task Reporting")
 
     # Sample KPI data
     kpi_data = {
-        "Avg Task Completion Time": {"value": "3.8m", "change": "+1.2m", "color": "🔴"},
+        "Avg Task Completion Time": {"value": "3.8m", "change": "+1.2m", "color": f"[🔴]({task_link})"},
         "On-Time Task Completion %": {"value": "82.4%", "change": "", "color": "🟡"},
         "Overdue Tasks": {"value": "142", "change": "+12%", "color": "🟢"},
         "Compliance Audits Passed": {"value": "91.3%", "change": "+5.4%", "color": "🟢"}
@@ -50,11 +51,11 @@ with tab1:
             "75%"
         ],
         "Status": [
-            "🔴",
+            f"[🔴]({task_link})",
             "🟢",
             "🟢",
-            "🔴",
-            "🔴"
+            f"[🔴]({task_link})",
+            f"[🔴]({task_link})"
         ]
     })
 
@@ -99,10 +100,10 @@ with tab2:
                 elif val <= tgt:
                     return '🟡'
                 else:
-                    return '🔴'
+                    return f"[🔴]({task_link})"
             else:
                 if val > tgt * 1.1:
-                    return '🔴'
+                    return f"[🔴]({task_link})"
                 elif val > tgt:
                     return '🟡'
                 else:
